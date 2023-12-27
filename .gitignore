@@ -163,5 +163,5 @@ cython_debug/
 
 confg/data/config.json
 
-i_active_derectory/src/_testeExec*
-i_active_derectory/src/teste*
+i_active_directory/src/_testeExec*
+i_active_directory/src/teste*
