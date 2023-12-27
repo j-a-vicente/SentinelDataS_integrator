@@ -5,9 +5,10 @@ import cx_Oracle
 import json
 
 class DatabaseConnection:
-    def __init__(self, db_type, server, database, config_file=".\src\data\config.json"):
+    def __init__(self, db_type, server, port, database, config_file=".\confg\data\config.json"):
         self.db_type = db_type
         self.server = server
+        self.port = port
         self.database = database
         self.user = None
         self.password = None
@@ -26,7 +27,7 @@ class DatabaseConnection:
             connection_str = f'DRIVER={{ODBC Driver 17 for SQL Server}};SERVER={self.server};DATABASE={self.database};UID={self.user};PWD={self.password};COLLATION={{Latin1_General_CI_AS}}'
             self.connection = pyodbc.connect(connection_str)
         elif self.db_type == 'PostgreSQL':
-            self.connection = psycopg2.connect(host=self.server, database=self.database, user=self.user, password=self.password)
+            self.connection = psycopg2.connect(host=self.server, database=self.database, user=self.user, password=self.password, port=self.port)
         elif self.db_type == 'MySQL':
             self.connection = mysql.connector.connect(host=self.server, database=self.database, user=self.user, password=self.password)
         elif self.db_type == 'Oracle':
