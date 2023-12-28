@@ -1,42 +1,44 @@
-CREATE TABLE ad_computer (
-    SID varchar(100),
-    Name text,
-    DisplayName text,
-    SamAccountName text,
-    Description text,
-    ObjectClass varchar(30),
-    PrimaryGroup text,
-    MemberOf text,
-    OperatingSystem text,
-    OperatingSystemHotfix text,
-    OperatingSystemServicePack text,
-    OperatingSystemVersion text,
-    CanonicalName text,
-    Enabled boolean,
-    IPv4Address text,
-    Created timestamp,
-    Deleted timestamp,
-    Modified timestamp,
-    LastLogonDate timestamp,
-    logonCount int,
-    PasswordExpired boolean,
-    PasswordLastSet timestamp,
-    AuthenticationPolicy text,
-    LastUpdateEtl timestamp DEFAULT current_timestamp
-);
+CREATE TABLE IF NOT EXISTS stage.ad_contact
+(
+    sid character varying(100) COLLATE pg_catalog."default",
+    name text COLLATE pg_catalog."default",
+    dnshostname text COLLATE pg_catalog."default",
+    samaccountname text COLLATE pg_catalog."default",
+    description text COLLATE pg_catalog."default",
+    objectcategory text COLLATE pg_catalog."default",
+    objectclass text COLLATE pg_catalog."default",
+    operatingsystem text COLLATE pg_catalog."default",
+    operatingsystemversion text COLLATE pg_catalog."default",
+    distinguishedname text COLLATE pg_catalog."default",
+    whencreated timestamp without time zone,
+    whenchanged timestamp without time zone,
+    lastlogontimestamp timestamp without time zone,
+    lastupdateetl timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    cont bigint
+)
+TABLESPACE pg_default;
 
-CREATE TABLE ad_contact (
+ALTER TABLE IF EXISTS stage.ad_computer
+    OWNER to "EtlMonitorPowerBI";
+
+CREATE TABLE stage.ad_contact (
     Name varchar(100),
     DisplayName varchar(100),
     mailNickname varchar(100),
     mail varchar(100),
-    CanonicalName text,
-    DistinguishedName text,
-    created timestamp,
-    Deleted timestamp,
-    Modified timestamp,
-    LastUpdateEtl timestamp DEFAULT current_timestamp
-);
+    memberOf text,
+    distinguishedName text,
+    objectCategory text,
+    objectClass text,
+    whenCreated timestamp,
+    whenChanged timestamp,
+    lastupdateetl timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    cont bigint
+)
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS stage.ad_contact
+    OWNER to "EtlMonitorPowerBI";
 
 CREATE TABLE ad_domain_controller (
     Name text,

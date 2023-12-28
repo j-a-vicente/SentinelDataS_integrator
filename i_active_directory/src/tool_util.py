@@ -1,5 +1,7 @@
 from binascii import b2a_hex
 
+from datetime import datetime, timedelta
+
 class util:
     def sid_to_str(sid):
 
@@ -35,6 +37,48 @@ class util:
 
         return sid
 
+
+    def whenC_to_datetime(whenCreated):
+        if whenCreated is not None:
+            when_changed_value = whenCreated
+            # Remova o "Z" no final e converta para um objeto datetime
+            when_changed_datetime = datetime.strptime(when_changed_value[:-1], "%Y%m%d%H%M%S.%f")
+
+            # Exiba a data e hora no formato desejado
+            objectWhen = when_changed_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+            return objectWhen         
+        else:
+            return '1900-01-01 00:00:00'
+
+    def int_to_datetime(lastLogonTimestamp):
+        if lastLogonTimestamp is not None:
+
+            # Valor do atributo lastLogonTimestamp do Active Directory
+            last_logon_timestamp_value = int(lastLogonTimestamp)
+
+            # Época do Windows (1 de janeiro de 1601)
+            windows_epoch = datetime(1601, 1, 1)
+
+            # Converta o valor para segundos (1 segundo = 10^7 nanossegundos)
+            seconds_since_windows_epoch = last_logon_timestamp_value / 10**7
+
+            # Crie o objeto datetime adicionando os segundos à época do Windows
+            last_logon_datetime = windows_epoch + timedelta(seconds=seconds_since_windows_epoch)
+
+            # Exiba a data e hora no formato desejado
+            objectL = last_logon_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+            return objectL
+        else:
+            return '1900-01-01 00:00:00'
+
+
+
 if __name__ == "__main__":
-    sid = b'\x01\x05\x00\x00\x00\x00\x00\x05\x15\x00\x00\x00\x9dMu\x02=\r\x00+n?|F\xb3\x97\x01\x00'
-    print(util.sid_to_str(sid))  # S-1-5-21-2562418665-3218585558-1813906818-1576
+    #sid = b'\x01\x05\x00\x00\x00\x00\x00\x05\x15\x00\x00\x00\x9dMu\x02=\r\x00+n?|F\xb3\x97\x01\x00'
+    #print(util.sid_to_str(sid))  # S-1-5-21-2562418665-3218585558-1813906818-1576
+    #whenCreated = "20231228133842.0Z"
+    #print(util.whenC_to_datetime(whenCreated))
+    lastLogonTimestamp = 13347737191359443
+    print(util.int_to_datetime(lastLogonTimestamp))
