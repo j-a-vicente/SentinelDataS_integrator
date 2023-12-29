@@ -73,7 +73,15 @@ class util:
         else:
             return '1900-01-01 00:00:00'
 
-
+    def remover_aspas(valor):
+         #Remover aspas de dentro do registro.
+        if valor is not None:      
+            texto = str(valor)
+            valor_sem_aspas = texto.replace("'", "")                               
+        else:
+            valor_sem_aspas = ""      
+        
+        return valor_sem_aspas
 
 if __name__ == "__main__":
     #sid = b'\x01\x05\x00\x00\x00\x00\x00\x05\x15\x00\x00\x00\x9dMu\x02=\r\x00+n?|F\xb3\x97\x01\x00'

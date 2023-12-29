@@ -1,7 +1,7 @@
 import logging
 
 class CommandExecutor:
-    def __init__(self, connection, log_file='e:\temp\error_log.txt'):
+    def __init__(self, connection, log_file='e:\\temp\\error_log.txt'):
         self.connection = connection
 
         # Configurar o logging
@@ -16,5 +16,6 @@ class CommandExecutor:
             cursor.close()
             return 1  # 1 for "executado com sucesso"
         except Exception as e:
-            logging.error(f"Error: {e}")
+            error_message = f"Error executing command: {command}\nError details: {e}"
+            logging.error(error_message)
             return 0  # 0 for "executado com falha"
