@@ -2,6 +2,12 @@ from binascii import b2a_hex
 
 from datetime import datetime, timedelta
 
+from datetime import datetime, timedelta, tzinfo
+
+from calendar import timegm
+
+
+
 class util:
     def sid_to_str(sid):
 
@@ -52,26 +58,30 @@ class util:
             return '1900-01-01 00:00:00'
 
     def int_to_datetime(lastLogonTimestamp):
-        if lastLogonTimestamp is not None:
+        if int(lastLogonTimestamp) != 9223372036854775807:
+            if lastLogonTimestamp is not None :
 
-            # Valor do atributo lastLogonTimestamp do Active Directory
-            last_logon_timestamp_value = int(lastLogonTimestamp)
+                # Valor do atributo lastLogonTimestamp do Active Directory
+                last_logon_timestamp_value = int(lastLogonTimestamp)
 
-            # Época do Windows (1 de janeiro de 1601)
-            windows_epoch = datetime(1601, 1, 1)
+                # Época do Windows (1 de janeiro de 1601)
+                windows_epoch = datetime(1601, 1, 1)
 
-            # Converta o valor para segundos (1 segundo = 10^7 nanossegundos)
-            seconds_since_windows_epoch = last_logon_timestamp_value / 10**7
+                # Converta o valor para segundos (1 segundo = 10^7 nanossegundos)
+                seconds_since_windows_epoch = last_logon_timestamp_value / 10**7
 
-            # Crie o objeto datetime adicionando os segundos à época do Windows
-            last_logon_datetime = windows_epoch + timedelta(seconds=seconds_since_windows_epoch)
+                # Crie o objeto datetime adicionando os segundos à época do Windows
+                last_logon_datetime = windows_epoch + timedelta(seconds=seconds_since_windows_epoch)
 
-            # Exiba a data e hora no formato desejado
-            objectL = last_logon_datetime.strftime("%Y-%m-%d %H:%M:%S")
+                # Exiba a data e hora no formato desejado
+                objectL = last_logon_datetime.strftime("%Y-%m-%d %H:%M:%S")
 
-            return objectL
+                return objectL
+            else:
+                return '1900-01-01 00:00:00'
         else:
             return '1900-01-01 00:00:00'
+
 
     def remover_aspas(valor):
          #Remover aspas de dentro do registro.
@@ -83,10 +93,34 @@ class util:
         
         return valor_sem_aspas
 
+    def conver_int_datetime(raw_date):
+        
+        try:
+            # Get seconds and remainder in terms of Unix epoch
+            (s, ns100) = divmod(raw_date - 116444736000000000 , 10000000)
+            # Convert to datetime object
+            dt = datetime.utcfromtimestamp(s)
+            # Add remainder in as microseconds. Python 3.2 requires an integer
+            dt = dt.replace(microsecond=(ns100 // 10))
+            return dt
+        except Exception:
+            return '1900-01-01 00:00:00.000'
+
+    def if_null(valor):
+        if valor is not None: 
+            return valor
+        else:
+            return 0
+
+
+
 if __name__ == "__main__":
     #sid = b'\x01\x05\x00\x00\x00\x00\x00\x05\x15\x00\x00\x00\x9dMu\x02=\r\x00+n?|F\xb3\x97\x01\x00'
     #print(util.sid_to_str(sid))  # S-1-5-21-2562418665-3218585558-1813906818-1576
     #whenCreated = "20231228133842.0Z"
     #print(util.whenC_to_datetime(whenCreated))
-    lastLogonTimestamp = 13347737191359443
+    lastLogonTimestamp = 9223372036854775807
     print(util.int_to_datetime(lastLogonTimestamp))
+    #valor = 'aa'
+    #vl = util.if_null(valor)
+    #print(vl)
