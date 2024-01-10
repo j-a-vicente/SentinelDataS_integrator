@@ -1,3 +1,5 @@
+import socket
+
 from binascii import b2a_hex
 
 from datetime import datetime, timedelta
@@ -5,6 +7,8 @@ from datetime import datetime, timedelta
 from datetime import datetime, timedelta, tzinfo
 
 from calendar import timegm
+
+
 
 
 
@@ -112,6 +116,16 @@ class util:
         else:
             return 0
 
+    def obter_ip(nome_host):
+        try:
+            endereco_ip = socket.gethostbyname(nome_host)
+            return endereco_ip
+        except socket.error as e:
+            print(f"Erro ao obter IP para {nome_host}: {e}")
+            return None
+
+
+
 
 
 if __name__ == "__main__":
@@ -119,8 +133,9 @@ if __name__ == "__main__":
     #print(util.sid_to_str(sid))  # S-1-5-21-2562418665-3218585558-1813906818-1576
     #whenCreated = "20231228133842.0Z"
     #print(util.whenC_to_datetime(whenCreated))
-    lastLogonTimestamp = 9223372036854775807
-    print(util.int_to_datetime(lastLogonTimestamp))
+    #lastLogonTimestamp = 9223372036854775807
+    #print(util.int_to_datetime(lastLogonTimestamp))
     #valor = 'aa'
     #vl = util.if_null(valor)
     #print(vl)
+    print(util.obter_ip('BE10357525'))
