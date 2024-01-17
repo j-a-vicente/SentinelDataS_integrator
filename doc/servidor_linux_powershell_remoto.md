@@ -8,6 +8,7 @@ Todos os componentes para execução dos scripts deverão ser instalado neste se
 - Criar contâiner.
 - Acesso via ssh.
 - Instalação do PowerShell 7.x.
+- Instalação do ODBC PostgreSQL.
 - Instalação do modulo Nutanix.
 - Instalação do modulo VMWare.
 - Instalação do modulo Sharepoint 365.
@@ -36,6 +37,16 @@ EXPOSE 22
 service ssh start
 
 ````
+
+__Instalação do ODBC PostgreSQL__
+Open Database Connectivity (ODBC) é uma interface padrão para acessar bancos de dados. Ele fornece uma maneira uniforme de acessar dados armazenados em uma ampla variedade de bancos de dados, incluindo PostgreSQL . Os drivers ODBC atuam como intermediários entre o banco de dados e o aplicativo.
+
+````
+apt-get update
+apt-get install -y unixodbc unixodbc-dev odbc-postgresql
+
+````
+
 
 __Instalação do PowerShell 7.x__
 ````
@@ -94,3 +105,5 @@ Connect-NTNXPrismCentral -Server 127.0.0.1 -UserName loginNutanix@contoso.com.br
 
 
 
+## Referência:
+[PowerShell with ODBC to interact with PostgreSQL (Linux and Windows)](https://www.migops.com/blog/powershell-with-odbc-to-interact-with-postgresql-linux-and-windows/)

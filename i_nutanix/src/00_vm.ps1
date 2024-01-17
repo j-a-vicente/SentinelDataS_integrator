@@ -1,45 +1,50 @@
-
 # Este script foi criado para extrair as VM do virtualizado Nutanix.
-
-
-param($us, $pw) 
-
-#Parametro necessário para execução do script dentro do job
-#Set-Location C:
 
 # O script foi criado para ser executado de dentro de um JOB do agent do SQL Server.
 Import-Module Nutanix.Prism.Common -Prefix NTNX
 Import-Module Nutanix.Prism.PS.Cmds -Prefix NTNX
 
+# Recupera o usuario e senha para conexão com o banco de dados do arquivo de configurcao.
 
-$retorno = powershell.exe -command "& C:\Users\t818008511\Documents\GitHub\SentinelDataS_integrator\confg\data\conexao_config.ps1 -NomdeConexao 'Nutanix'"
+# Conexao com o Nutainx. 
+$RetNutanix = pwsh -command "& /powershell/src/SentinelDataS_integrator/confg/data/conexao_config.ps1 -NomdeConexao 'Nutanix'"
 
-#Variáveis do servido e banco de dados
-$SQLInstance = $retorno[0] #"XXXXXXXXXX" # Nome da estância de banco de dados
-$SQLDatabase = $retorno[1] #"XXXXXXXXXX" # Nome da base de dados
+# Conexao com o banco de dados do Sentinel.
+$RetSentinel = pwsh -command "& /powershell/src/SentinelDataS_integrator/confg/data/conexao_config.ps1 -NomdeConexao 'Sentinel'"
 
-#Write-Output  $SQLInstance, $SQLDatabase
+#Variáveis do servido e banco de dado, os valores recuperados ao inseridos nas variaveis da conexao.
+$MyServer = "10.0.19.140"
+$MyPort = "5433"
+$MyDB = "sds_int_nutanix"
+$MyUid  = $RetSentinel[0] #"XXXXXXXXXX" # Nome da estância de banco de dados
+$MyPass = $RetSentinel[1] #"XXXXXXXXXX" # Nome da base de dados
 
-# Limpeza da tabela de STAGE que reseberá os dados brutos
- $SQLQueryDelete = "USE $SQLDatabase
-    TRUNCATE TABLE [staging].[NutanixVM]"
+# Monta a conexao com o banco de dados.
+$DBConnectionString = "DRIVER={PostgreSQL Unicode};Server=$MyServer;Port=$MyPort;Database=$MyDB;Uid=$MyUid;Pwd=$MyPass;"
+$DBConn = New-Object System.Data.Odbc.OdbcConnection
+$DBConn.ConnectionString = $DBConnectionString
+$DBConn.Open()
+$DBCmd = $DBConn.CreateCommand()
 
-$SQLQuery1Output = Invoke-Sqlcmd -query $SQLQueryDelete -ServerInstance $SQLInstance
+# Script de limpeza.
+$DBCmd.CommandText = "TRUNCATE TABLE stage.vm;"
 
-<#
+#Executa o script carregado na vari�vel.
+$Reader = $DBCmd.ExecuteReader();
+
+
 #Carrega a senha do usuário para conexão.
-$pass = ConvertTo-SecureString -string $pw -force -AsPlainText
+$pass = ConvertTo-SecureString -string $RetNutanix[1] -force -AsPlainText
 
 # Comando para conectar no servidor Central do Nutanix.
-Connect-NTNXPrismCentral -Server 10.0.17.42 -UserName $us -Password $pass -AcceptInvalidSslCerts -ForcedConnection
+Connect-NTNXPrismCentral -Server 10.0.17.42 -UserName $RetNutanix[0] -Password $pass -AcceptInvalidSslCerts -ForcedConnection
 
 #Iniciar a extração dos Usuários das VM no Nutanix
 # A variável "$vms" é uma matriz que receberá o resultado do comando de extração das vm
 
     try{
 
-        $vms = Get-NTNXVM #| Select-Object pcHostName, powerState, vmName, ipAddresses, hypervisorType, hostName, memoryCapacityInBytes, memoryReservedCapacityInBytes, numVCpus, numNetworkAdapters, controllerVm, vdiskNames, vdiskFilePaths, diskCapacityInBytes, description -ErrorAction stop
-        #Get-NTNXVM | Select-Object pcHostName, powerState, vmName, ipAddresses, hypervisorType, hostName, memoryCapacityInBytes, memoryReservedCapacityInBytes, numVCpus, numNetworkAdapters, controllerVm, vdiskNames, vdiskFilePaths, diskCapacityInBytes, description -ErrorAction stop
+        $vms = Get-NTNXVM | Select-Object pcHostName, powerState, vmName, ipAddresses, hypervisorType, hostName, memoryCapacityInBytes, memoryReservedCapacityInBytes, numVCpus, numNetworkAdapters, controllerVm, vdiskNames, vdiskFilePaths, diskCapacityInBytes, description -ErrorAction stop        
         }catch{
         Write-Output "Erro na extração."
         throw $_
@@ -70,21 +75,22 @@ Connect-NTNXPrismCentral -Server 10.0.17.42 -UserName $us -Password $pass -Accep
    
    
    #A variável "$SQLQuery" receberar o insert com os dados para ser executado no banco
-   $SQLQuery = "USE $SQLDatabase
-   INSERT INTO [staging].[NutanixVM]
-           ([pcHostName],[powerState],[vmName],[ipAddresses],[hypervisorType]
-           ,[hostName],[memoryCapacityInBytes],[memoryReservedCapacityInBytes]
-           ,[numVCpus],[numNetworkAdapters],[controllerVm],[vdiskNames]
-           ,[vdiskFilePaths],[diskCapacityInBytes],[description])
+   $QueryInsert = " INSERT INTO stage.vm (pcHostName,powerState,vmName,ipAddresses,hypervisorType
+           ,hostName,memoryCapacityInBytes,memoryReservedCapacityInBytes
+           ,numVCpus,numNetworkAdapters,controllerVm,vdiskNames
+           ,vdiskFilePaths,diskCapacityInBytes,description)
    VALUES  ('$pcHostName','$powerState','$vmName','$ipAddresses','$hypervisorType'
            ,'$hostName','$memoryCapacityInBytes','$memoryReservedCapacityInBytes'
            ,'$numVCpus','$numNetworkAdapters','$controllerVm','$vdiskNames'
            ,'$vdiskFilePaths','$diskCapacityInBytes','$description');"
    
-   
+   #Write-Output $QueryInsert
    #Executa o comando de insert com os dados
    try{
-       $SQLQuery1Output = Invoke-Sqlcmd -query $SQLQuery -ServerInstance $SQLInstance -ErrorAction stop
+       $DBCmd = $DBConn.CreateCommand()
+       $DBCmd.CommandText = $QueryInsert
+       $Reader = $DBCmd.ExecuteReader();
+
    }catch{
    Write-Output $SQLQuery
    throw $_
@@ -94,4 +100,4 @@ Connect-NTNXPrismCentral -Server 10.0.17.42 -UserName $us -Password $pass -Accep
 
    }
 
-#>
+$DBConn.Close();
