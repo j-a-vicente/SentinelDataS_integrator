@@ -99,11 +99,6 @@ Connect-NTNXPrismCentral -Server 127.0.0.1 -UserName loginNutanix@contoso.com.br
 
 
 
-
-
-
-
-
-
 ## Referência:
 [PowerShell with ODBC to interact with PostgreSQL (Linux and Windows)](https://www.migops.com/blog/powershell-with-odbc-to-interact-with-postgresql-linux-and-windows/)
+[MacLochlainns Weblog](https://blog.mclaughlinsoftware.com/2022/03/31/postgresqlpowershell/)
