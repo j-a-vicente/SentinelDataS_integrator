@@ -1,8 +1,8 @@
 import json
 
 class ConfigReader:
-    def __init__(self, arquivo):
-        self.arquivo = arquivo
+    def __init__(self):
+        self.arquivo = '.\confg\data\config.json'
         self.dados = self._carregar_dados()        
 
     def _carregar_dados(self):
@@ -23,16 +23,16 @@ class ConfigReader:
 if __name__ == "__main__":
 
     # Substitua 'dados.json' pelo caminho do seu arquivo JSON
-    nome_arquivo = '.\confg\data\config.json'
+    #nome_arquivo = '.\confg\data\config.json'
 
     # Substitua "SCCM" pelo NomeDeConexao desejado
     nome_de_conexao = "SCCM"
 
     # Criar uma instância da classe ConfigReader
-    config_reader = ConfigReader(nome_arquivo)
+    #config_reader = ConfigReader(nome_arquivo)
 
     # Chamar o método buscar_linha_por_nome_de_conexao para obter usuário e senha
-    usuario_encontrado, senha_encontrada = config_reader.buscar_linha_por_nome_de_conexao(nome_de_conexao)
+    usuario_encontrado, senha_encontrada = ConfigReader.buscar_linha_por_nome_de_conexao(nome_de_conexao)
 
     if usuario_encontrado is not None and senha_encontrada is not None:
         print("Linha encontrada:")
