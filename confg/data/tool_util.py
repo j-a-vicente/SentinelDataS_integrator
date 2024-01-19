@@ -62,9 +62,9 @@ class util:
             return '1900-01-01 00:00:00'
 
     def int_to_datetime(lastLogonTimestamp):
-        if int(lastLogonTimestamp) != 9223372036854775807:
-            if lastLogonTimestamp is not None :
-
+        vr = util.if_null(lastLogonTimestamp)
+        if vr != 0 :
+            if int(lastLogonTimestamp) != 9223372036854775807:
                 # Valor do atributo lastLogonTimestamp do Active Directory
                 last_logon_timestamp_value = int(lastLogonTimestamp)
 
