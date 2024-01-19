@@ -15,6 +15,7 @@ from execute_query import QueryExecutor
 # Importe a classe QueryExecutor do arquivo execute_command.py
 from execute_command import CommandExecutor
 
+
 def gravar(insert_v):
       
       # Crie uma conexão com o banco de dado de destino 
@@ -22,8 +23,8 @@ def gravar(insert_v):
 
     # Iniciar os recordSet com a conexão de destino.      
       insert_executor  = CommandExecutor(i_destino.connection)
-      insert_query = """INSERT INTO stage.ad_computer(cont,sid, name, dnshostname, samaccountname, description, objectcategory, objectclass, operatingsystem, operatingsystemversion, distinguishedname, whencreated, whenchanged, lastlogontimestamp) VALUES """ 
-      insert_query = insert_query + "\n"+ insert_v +';'				
+      insert_query = """INSERT INTO stage.ad_user(cont, objectsid, name, displayname, samaccountname, mail, title, department, description, objectcategory, objectclass, employeetype, company, physicaldeliveryofficename, city, distinguishedname, memberof, whencreated, whenchanged, accountexpires, badpasswordtime, pwdlastset, lastlogontimestamp, lastlogon, badpwdcount, lockouttime, useraccountcontrol) VALUES """ 
+      insert_query = insert_query + "\n"+ insert_v +';'					
       #print(insert_query)
       result = insert_executor.execute_command(insert_query)  
 
@@ -31,7 +32,7 @@ def listar_computadores():
 # Crie uma conexão com o banco de dado de DESTINO
     SentinelDB = DatabaseConnection("PostgreSQL", "10.0.19.140", "sds_int_active_directory", "Sentinel", 5433)
     st_insert_executor  = CommandExecutor(SentinelDB.connection)
-    truncatQuery = 'truncate table stage.ad_computer'
+    truncatQuery = 'truncate table stage.ad_user'
     result = st_insert_executor.execute_command(truncatQuery)
 
     nome_conexao = "ActiveDirectory"
@@ -55,29 +56,24 @@ def listar_computadores():
     
     try:        
         search_base = 'DC=infraero,DC=gov,DC=br'  # Substitua com a base DN do seu domínio
-        search_filter = '(objectClass=computer)'
+        search_filter = '(&(objectCategory=Person)(objectClass=user))'
         #attributes = ALL_ATTRIBUTES  # Retorna todos os atributos
-        #attributes=['Created','Deleted','Modified','PasswordLastSet']
-        attributes=['objectSid','name','dNSHostName','sAMAccountName','Description','objectCategory','ObjectClass','operatingSystem','operatingSystemVersion','distinguishedName','whenCreated','whenChanged','lastLogonTimestamp',]
+        attributes=['objectSid','name', 'displayName', 'sAMAccountName', 'mail','userPrincipalName','title', 'department','description','objectCategory','objectClass','employeeType','company','physicalDeliveryOfficeName','City','distinguishedName','memberOf','whenCreated','whenChanged','accountExpires','badPasswordTime','pwdLastSet','lastLogonTimestamp','lastLogon','badPwdCount','lockoutTime','userAccountControl']
         page_size = 1000  # Número máximo de resultados por página
                
         connection.search(search_base, search_filter, attributes=attributes, search_scope=SUBTREE, paged_size=page_size)
         
         while True:
             for entry in connection.entries:
-                cont +=1                
-                #print("\n")
-                #print(f"lastLogonTimestamp: {entry.lastLogonTimestamp.value}")                                    
-                #print(f"lastLogonTimestamp: {util.if_null(entry.lastLogonTimestamp.value)}")  
-                #print(f"lastLogonTimestamp: {util.int_to_datetime( util.if_null(entry.lastLogonTimestamp.value) )}")                                    
-                #print(f"lastLogonTimestamp: {util.int_to_datetime(entry.lastLogonTimestamp.value)}")                                    
-                insert_v = insert_v + "\n"+ F"('{cont}','{util.sid_to_str(entry.objectSid.value)}','{entry.name.value}','{entry.dNSHostName.value}','{entry.sAMAccountName.value}','{entry.Description.value}','{entry.objectCategory.value}','computer','{entry.operatingSystem.value}','{entry.operatingSystemVersion.value}','{entry.distinguishedName.value}','{util.whenC_to_datetime(entry.whenCreated.value)}','{util.whenC_to_datetime(entry.whenChanged.value)}','{util.int_to_datetime( util.if_null(entry.lastLogonTimestamp.value) )}'),"
-                #print(insert_v)
 
-            #print(cont)
+                cont +=1                
+
+                insert_v = insert_v + "\n"+  F"('{cont}','{util.sid_to_str(entry.objectSid.value)}','{util.remover_aspas(entry.name.value)}','{util.remover_aspas(entry.displayname.value)}','{util.remover_aspas(entry.samaccountname.value)}','{util.remover_aspas(entry.mail.value)}','{util.remover_aspas(entry.title.value)}','{util.remover_aspas(entry.department.value)}','{util.remover_aspas(entry.description.value)}','{util.remover_aspas(entry.objectcategory.value)}','user','{util.remover_aspas(entry.employeetype.value)}','{util.remover_aspas(entry.company.value)}','{util.remover_aspas(entry.physicaldeliveryofficename.value)}','{util.remover_aspas(entry.city.value)}','{util.remover_aspas(entry.distinguishedname.value)}','{util.remover_aspas(entry.memberof.value)}','{util.whenC_to_datetime(entry.whenCreated.value)}','{util.whenC_to_datetime(entry.whenChanged.value)}','{util.conver_int_datetime(entry.accountexpires.value)}','{util.conver_int_datetime(entry.badpasswordtime.value)}','{util.conver_int_datetime(entry.pwdlastset.value)}','{util.conver_int_datetime(entry.lastlogontimestamp.value)}','{util.conver_int_datetime(entry.lastlogon.value)}','{util.if_null(entry.badpwdcount.value)}','{util.if_null(entry.lockouttime.value)}','{util.if_null(entry.useraccountcontrol.value)}'),"
+
+                
             insert_v_sem_ultima_virgula = insert_v[:-1]
-            gravar(insert_v_sem_ultima_virgula)       
-            #print(insert_v)   
+            #print(cont)            
+            gravar(insert_v_sem_ultima_virgula)          
             insert_v = ''
 
             # Verificar se há mais páginas
