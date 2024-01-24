@@ -9,6 +9,10 @@ from datetime import datetime, timedelta, tzinfo
 from calendar import timegm
 
 class util:
+
+    def __init__(self, ip_address):
+        self.ip_address = ip_address
+
     def sid_to_str(sid):
 
         try:
@@ -112,14 +116,6 @@ class util:
         else:
             return 0
 
-    def obter_ip(nome_host):
-        try:
-            endereco_ip = socket.gethostbyname(nome_host)
-            return endereco_ip
-        except socket.error as e:
-            print(f"Erro ao obter IP para {nome_host}: {e}")
-            return None
-
     def obter_nameHost_por_ip(ip):
         try:
             nome_host = socket.gethostbyaddr(ip)
@@ -141,7 +137,25 @@ class util:
                 raise
 
 
-#if __name__ == "__main__":
+
+    def test_ports(self):
+        ports_to_test = [22, 3389, 1433, 1434, 1435, 2101, 2102, 2103, 2104, 2105, 2106, 2107, 2108, 2109, 2110, 3389, 3390, 5432, 5433, 5434, 5435, 5436, 5437, 5438, 5439]
+        results = {}
+        for port in ports_to_test:
+            results[port] = self.test_port(port)
+        return results
+
+    def test_port(self, port):
+        try:
+            with socket.create_connection((self.ip_address, port), timeout=1):
+                return True
+        except (socket.timeout, ConnectionRefusedError):
+            return False
+
+
+
+
+if __name__ == "__main__":
 #    print('texte')
     #sid = b'\x01\x05\x00\x00\x00\x00\x00\x05\x15\x00\x00\x00\x9dMu\x02=\r\x00+n?|F\xb3\x97\x01\x00'
     #print(util.sid_to_str(sid))  # S-1-5-21-2562418665-3218585558-1813906818-1576
@@ -155,9 +169,12 @@ class util:
     #nome_host_a_verificar = 'se10499803.infraero.gov.br'
     #nome_host_a_verificar = 'S-SECN03'
     #endereco_ip  = util.obter_ip_por_nameHost(nome_host_a_verificar)
-
-
     #if endereco_ip:
     #    print(f"O endereço IP para o nome do host {nome_host_a_verificar} é: {endereco_ip}")
     #else:
     #    print(f"Host não cadastrado no DNS: {nome_host_a_verificar}")
+    # Exemplo de uso:
+    ip_address = "10.0.19.140"
+    tester = util(ip_address)
+    testePorta = tester.test_ports()
+    print(testePorta)  
