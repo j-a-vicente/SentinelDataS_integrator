@@ -1,0 +1,1 @@
+SELECT sid, name FROM stage.ad_computer;

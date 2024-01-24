@@ -124,11 +124,29 @@ class util:
             print(f"Erro ao obter IP para {nome_host}: {e}")
             return None
 
+    def obter_nameHost_por_ip(ip):
+        try:
+            nome_host = socket.gethostbyaddr(ip)
+            return nome_host[0]
+        except socket.gaierror as e:
+            if e.errno == socket.EAI_NONAME:
+                return None
+            else:
+                raise
+
+    def obter_ip_por_nameHost(nome_host):
+        try:
+            endereco_ip = socket.gethostbyname(nome_host)
+            return endereco_ip
+        except socket.gaierror as e:
+            if e.errno == socket.EAI_NONAME:
+                return None
+            else:
+                raise
 
 
-
-
-if __name__ == "__main__":
+#if __name__ == "__main__":
+#    print('texte')
     #sid = b'\x01\x05\x00\x00\x00\x00\x00\x05\x15\x00\x00\x00\x9dMu\x02=\r\x00+n?|F\xb3\x97\x01\x00'
     #print(util.sid_to_str(sid))  # S-1-5-21-2562418665-3218585558-1813906818-1576
     #whenCreated = "20231228133842.0Z"
@@ -138,4 +156,12 @@ if __name__ == "__main__":
     #valor = 'aa'
     #vl = util.if_null(valor)
     #print(vl)
-    print(util.obter_ip('BE10357525'))
+    #nome_host_a_verificar = 'se10499803.infraero.gov.br'
+    #nome_host_a_verificar = 'S-SECN03'
+    #endereco_ip  = util.obter_ip_por_nameHost(nome_host_a_verificar)
+
+
+    #if endereco_ip:
+    #    print(f"O endereço IP para o nome do host {nome_host_a_verificar} é: {endereco_ip}")
+    #else:
+    #    print(f"Host não cadastrado no DNS: {nome_host_a_verificar}")
