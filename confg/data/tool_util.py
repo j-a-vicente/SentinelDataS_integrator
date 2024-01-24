@@ -8,10 +8,6 @@ from datetime import datetime, timedelta, tzinfo
 
 from calendar import timegm
 
-
-
-
-
 class util:
     def sid_to_str(sid):
 
