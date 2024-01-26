@@ -52,7 +52,7 @@ foreach ($srv in $vmserver){
         $vms = Get-VM | Select-Object Id, Name, PowerState, Notes, Guest, NumCpu, CoresPerSocket, MemoryMB, MemoryGB, VMHost,
         Folder, ResourcePoolId, ResourcePool, HARestartPriority, HAIsolationResponse, DrsAutomationLevel,
         VMSwapfilePolicy, VMResourceConfiguration, Version, HardwareVersion, PersistentId, GuestId,
-        UsedSpaceGB, ProvisionedSpaceGB, DatastoreIdList, CreateDate,@{N="IP";E={@($_.guest.IPAddress0)}}
+        UsedSpaceGB, ProvisionedSpaceGB, DatastoreIdList, CreateDate,@{N="IPAddress"; E={$_.Guest.IPAddress[0]}}
             }catch{
         Write-Output "Erro na extração."
         throw $_
@@ -62,7 +62,7 @@ foreach ($srv in $vmserver){
     #Loop que será usuado para transferir os dados da matriz para o banco de dados
     ForEach($vm in $vms){
 
-        #Write-Output $vm.vmName
+       # Write-Output $vm.IP
         #Para cada linha que a matriz percorre e inserido o valor na variável de destino.
  
         $Id                      = $vm.Id
@@ -127,7 +127,7 @@ foreach ($srv in $vmserver){
        	    $CreateDate              = $vm.CreateDate     
 	}
 
-        $IP                      = $vm.ip
+        $IP                      = $vm.IPAddress
 	$srv_server		 = $srv
    
    
@@ -140,7 +140,7 @@ foreach ($srv in $vmserver){
    VALUES  ('$Id','$Name','$PowerState','$Notes','$Guest','$NumCpu','$CoresPerSocket',Cast('$MemoryMB' as REAL),Cast('$MemoryGB' as REAL),
    '$VMHost','$Folder','$ResourcePoolId','$ResourcePool','$HARestartPriority','$HAIsolationResponse',
    '$DrsAutomationLevel','$VMSwapfilePolicy','$VMResourceConfiguration','$Version','$HardwareVersion',
-   '$PersistentId','$GuestId',Cast('$UsedSpaceGB' as REAL),Cast('$ProvisionedSpaceGB' as REAL),'$DatastoreIdList','$CreateDate','$ip','$srv_server');"
+   '$PersistentId','$GuestId',Cast('$UsedSpaceGB' as REAL),Cast('$ProvisionedSpaceGB' as REAL),'$DatastoreIdList','$CreateDate','$IP','$srv_server');"
    
    #write-Output $QueryInsert
    #Executa o comando de insert com os dados
