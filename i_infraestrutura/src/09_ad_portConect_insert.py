@@ -48,8 +48,16 @@ def localizarIP():
                 testePorta = tester.test_ports()
 
                 for port, result in testePorta.items():
-                    print(f"A porta {port} do ip {o_row[1]} está {'aberta' if result else 'fechada'}")
+                    #print(f"A porta {port} do ip {o_row[1]} está {'aberta' if result else 'fechada'}")
+                    if result:
+                        #print(f"A porta {port} do ip {o_row[1]} está aberta.")
+                        insert_v =  F"('{o_row[0]}','{o_row[1]}','{port}', 'true')"
+                        gravar(insert_v)
+                    else:
+                        #print(f"A porta {port} do ip {o_row[1]} está fechada")
 
+                        insert_v =  F"('{o_row[0]}','{o_row[1]}','{port}', 'false')"
+                        gravar(insert_v)
                     
                 
 if __name__ == "__main__":
