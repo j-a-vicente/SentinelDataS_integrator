@@ -1,7 +1,7 @@
 
 param($NomdeConexao) 
 # Caminho para o arquivo JSON
-$caminhoArquivo = "C:\Users\t818008511\Documents\GitHub\SentinelDataS_integrator\confg\data\config.json"
+$caminhoArquivo = "confg/data/config.json"
 
 # Lê o conteúdo do arquivo JSON
 $jsonConteudo = Get-Content -Path $caminhoArquivo | Out-String

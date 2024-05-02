@@ -1,0 +1,12 @@
+
+
+Criar video animado:
+elevenlabs.io
+adobe express https://new.express.adobe.com/tools/animate-from-audio
+
+logmarking
+logliverai
+logthemeia
+
+
+ pip install --proxy http://t818008511:Drv962324@proxy-sede.infranet.gov.br:8080 unidecodecd

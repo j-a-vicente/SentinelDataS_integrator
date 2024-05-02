@@ -1,0 +1,32 @@
+CREATE TRIGGER [SGBD].[tg_insert_TBIndex] ON [SGBD].[TBIndex]
+AFTER INSERT
+AS
+BEGIN
+
+    UPDATE DB
+    SET DB.[dhalteracao] = GETDATE()
+    FROM [SGBD].[TBIndex] AS DB 
+    INNER JOIN INSERTED AS INS ON INS.[idTBIndex] = DB.[idTBIndex]
+
+END
+GO
+ALTER TABLE [SGBD].[TBIndex] ENABLE TRIGGER [tg_insert_TBIndex]
+GO
+
+CREATE TRIGGER [SGBD].[tg_update_TBIndex] ON [SGBD].[TBIndex]
+AFTER UPDATE
+AS
+BEGIN
+
+    UPDATE BD
+    SET BD.[dhalteracao] = GETDATE()
+    FROM [SGBD].[TBIndex] AS BD
+    INNER JOIN INSERTED AS INS ON INS.[idTBIndex] = BD.[idTBIndex]
+
+END
+GO
+ALTER TABLE [SGBD].[TBIndex] ENABLE TRIGGER [tg_update_TBIndex]
+GO
+
+
+

@@ -1,0 +1,58 @@
+<#
+A função deste script facilitar a remoção da conta de extração nos servidores a serem documentado.
+
+Fluxo do Script:
+    1 - Carrega a lista de instância que está em CSV na memória.
+    2 - Carrega a istância de banco para variável do banco a ser conectado.
+    3 - Script que será executado na instância.
+    4 - Executa o script.
+        a - Desvincular conta de serviço das bases.
+        b - apagar conta de serviço
+
+Observação: o script deve ser executado por uma conta que tenha permissão para criar usuário nas instância de banco.    
+#>
+#1 - Carrega a lista de instância que está em CSV na memória.
+$hostList = Import-Csv -Path "C:\temp\scanHostNetwork.csv"  -Delimiter ";"
+
+#Loop que ler a lista carregada para memória
+    Foreach($hl in $hostList){
+        
+       ##2 - Carrega a istância de banco para variável do banco a ser conectado.
+        $SQLInstance = $hl.host
+        write-host $hl.host
+
+   #Script que será executado na instância.
+        #a - Desvincular conta de serviço das bases.
+        $SQLQuery = 'DECLARE @name sysname
+                    DECLARE @ScriptCMD nchar(3000)
+                    DECLARE dba_for CURSOR FOR
+		                    SELECT name 
+		                        FROM sys.databases 
+		                    WHERE state_desc = ''ONLINE''
+                    OPEN dba_for 
+	                    FETCH NEXT FROM dba_for INTO @name
+
+		                    WHILE @@FETCH_STATUS = 0
+		                    BEGIN
+			                    SET @ScriptCMD = ''USE [''+@name+'']
+							                       DROP USER [svc_sede_dcdados2]''
+				                    exec sp_executesql @scriptcmd						
+
+		                    FETCH NEXT FROM dba_for INTO @name
+		                    END
+
+
+                    CLOSE dba_for
+                    DEALLOCATE dba_for'
+
+        $SQLQueryOutput = Invoke-Sqlcmd -query $SQLQuery -ServerInstance $SQLInstance
+
+        #b - apagar conta de serviço
+        $SQLQuery = 'USE [master]
+                     GO
+                     DROP LOGIN [svc_sede_dcdados2]
+                     GO'
+
+        $SQLQueryOutput = Invoke-Sqlcmd -query $SQLQuery -ServerInstance $SQLInstance
+
+    }

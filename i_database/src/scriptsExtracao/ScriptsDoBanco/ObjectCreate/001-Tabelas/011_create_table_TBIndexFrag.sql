@@ -1,0 +1,26 @@
+
+CREATE TABLE [SGBD].[TBIndexFrag](
+	[idTBIndexFrag] [int] IDENTITY(1,1) NOT NULL,
+	[idTBIndex] [int] NOT NULL,
+	[Avg_frag] [varchar](128) NULL,
+	[Sumline] [int] NULL,
+	[DataTimer] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[idTBIndexFrag] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [Fato02]
+
+GO
+
+ALTER TABLE [SGBD].[TBIndexFrag] ADD  DEFAULT (getdate()) FOR [DataTimer]
+GO
+
+ALTER TABLE [SGBD].[TBIndexFrag]  WITH CHECK ADD  CONSTRAINT [FK_TBIndexFrag_TBIndex] FOREIGN KEY([idTBIndex])
+REFERENCES [SGBD].[TBIndex] ([idTBIndex])
+GO
+
+ALTER TABLE [SGBD].[TBIndexFrag] CHECK CONSTRAINT [FK_TBIndexFrag_TBIndex]
+GO
+
+

@@ -1,0 +1,15 @@
+SELECT NA.[ResourceID] 
+               , NA.[AdapterType0] 
+               , NA.[ProductName0] 
+               , NA.[MACAddress0] 
+               , NAC.[DHCPEnabled0] 
+               , NAC.[DHCPServer0] 
+               , NAC.[DNSDomain0] 
+               , NAC.[DNSHostName0] 
+               , NAC.[IPAddress0] 
+               , NA.[DeviceID0]
+               , NAC.[IPEnabled0] 
+               , NAC.[IPSubnet0] 
+               , NAC.[ServiceName0] 
+          FROM [CM_IFR].[dbo].[v_GS_NETWORK_ADAPTER] AS NA 
+          INNER JOIN [CM_IFR].[dbo].[v_GS_NETWORK_ADAPTER_CONFIGURATION] AS NAC ON NAC.ResourceID = NA.ResourceID AND NAC.MACAddress0 = NA.MACAddress0 AND NAC.IPEnabled0 = 1

@@ -1,0 +1,9 @@
+[
+{"NomdeConexao":"Sentinel", "database": "SentinelDataSuite"},
+{"NomdeConexao":"mddados", "database": "sds_database"},
+{"NomdeConexao":"Nutanix","database": "sds_int_nutanix"},
+{"NomdeConexao":"VMWare","database": "sds_int_vmware"},
+{"NomdeConexao":"SCCM", "database": "sds_int_sccm"},
+{"NomdeConexao":"Commvault","database": "sds_int_commvault"},
+{"NomdeConexao":"ActiveDirectory","database": "sds_int_active_directory"}
+]

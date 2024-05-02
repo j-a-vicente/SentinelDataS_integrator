@@ -1,0 +1,6 @@
+
+
+
+
+
+Set-PowerCLIConfiguration -InvalidCertificateAction Ignore

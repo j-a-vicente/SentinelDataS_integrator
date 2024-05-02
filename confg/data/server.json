@@ -1,0 +1,11 @@
+[
+{"NomdeConexao":"Sentinel", "server": "10.0.19.140","porta":"5433"},
+{"NomdeConexao":"Nutanix","server": "10.0.17.42","porta":""},
+{"NomdeConexao":"VMWare","server": "vc-scs.infraero.gov.br","porta":""},
+{"NomdeConexao":"VMWare","server": "aero.vms.infraero.gov.br","porta":""},
+{"NomdeConexao":"VMWare","server": "adm.vms.infraero.gov.br","porta":""},
+{"NomdeConexao":"SCCM","server": "S-SEBN26189","porta":""},
+{"NomdeConexao":"Commvault","server":"10.0.27.127","porta":""},
+{"NomdeConexao":"mddados", "server": "10.0.19.140","porta":"5433"},
+{"NomdeConexao":"ActiveDirectory","server": "ldap://infraero.gov.br","porta":""}
+]

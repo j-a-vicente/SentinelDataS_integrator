@@ -1,0 +1,18 @@
+INSERT INTO sgbd.instancia(id_serverhost , id_trilha , idcluster  , instancia  , sgbd  , ip  , regiao  , dependencia, adsite  , conectstring 
+						   , porta  , cluster  , versao  , productversion  , descricao  , funcaoserver  , sobreadministracao  , memoryconfig , cpu   )
+                   SELECT  id_serverhost, A.idtrilha, A.idcluster, A.instancia, A.sgbd, A.ip, A.regiao, A.dep  	, A.adsite, A.conectstring
+	                       , A.porta, A.cluster, A.versao, A.productversion, A.descricao, A.funcaoserver, A.sobreadministracao, B.memoryram, B.cpu
+FROM serverhost.instancia A
+LEFT JOIN serverhost.serverdb B ON B.hostname = A.hostname
+WHERE B.hostname IS NOT NULL
+
+
+
+SELECT hostname, ipaddress
+	FROM serverhost.serverdb
+	WHERE ipaddress IS NOT NULL
+
+SELECT idinstancia, idshservidor, idtrilha, idcluster
+     , servidor, hostname, instancia, sgbd, ip, regiao, dep, adsite, conectstring, porta
+	 , cluster, versao, productversion, descricao, funcaoserver, sobreadministracao, memoryconfig, portconect, "[CPU"
+FROM serverhost.instancia;    

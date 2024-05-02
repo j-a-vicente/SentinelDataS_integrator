@@ -1,0 +1,10 @@
+[
+{"NomdeConexao":"Sentinel", "user": "Sentinel","password": "Sentinel"},
+{"NomdeConexao":"Banco de dados", "user": "EtlMonitorPowerBI","password": "N2NnwrEuwG5166sk"},
+{"NomdeConexao":"Nutanix","user": "svc-sede-bi@infraero.gov.br","password": "BI@!nfr@16"},
+{"NomdeConexao":"VMWare","user": "svc-sede-backupbi@infraero.gov.br","password": "BackBI@!2023"},
+{"NomdeConexao":"SCCM", "user": "usr_dcdados","password": "o1gO3KvlLwI0Eo51y3"},
+{"NomdeConexao":"Commvault","user": "D_SEDE\\svc-sede-backup","password": "Infr@er0"},
+{"NomdeConexao":"ActiveDirectory","user": "D_SEDE\\svc-sede-powerbi","password": "DataZen!nfr@"},
+{"NomdeConexao":"mddados", "user": "usr_dcdados","password": "o1gO3KvlLwI0Eo51y3"}
+]

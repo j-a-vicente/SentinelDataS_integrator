@@ -1,0 +1,1 @@
+CALL sgbd.sp_pg_insert_bdtabela()

@@ -1,0 +1,86 @@
+import sys
+sys.path.insert(1, './confg/data')
+
+# Importe a classe ConexaoConfigReader que retorna usuário e senha
+from conexao_config import ConexaoConfigReader
+# Importe a classe DatabaseConnection do arquivo database_connection.py
+from database_connection import DatabaseConnection
+# Importe a classe QueryExecutor do arquivo execute_query.py
+from execute_query import QueryExecutor
+# Importe a classe QueryExecutor do arquivo execute_command.py
+from execute_command import CommandExecutor
+
+
+def gravar(insert_v):
+      
+      # Crie uma conexão com o banco de dado de destino 
+      i_destino = DatabaseConnection("PostgreSQL", "10.0.19.140", "sds_database", "Sentinel", 5433)
+
+    # Iniciar os recordSet com a conexão de destino.      
+      insert_executor  = CommandExecutor(i_destino.connection)
+      insert_query = """ CALL sgbd.sp_pg_insert_database_tamanho """ 
+      insert_query = insert_query + insert_v +';'				
+      #print(insert_query)
+      result = insert_executor.execute_command(insert_query)  
+
+
+def extracao():
+
+    i_destino = DatabaseConnection("PostgreSQL", "10.0.19.140", "sds_database", "Sentinel", 5433)
+    i_query_executor = QueryExecutor(i_destino.connection)
+
+    insert_v = ''
+    cont = 0
+    # Ler o script que vai retornar a lista de servidores para conexão remota.
+    with open('i_database/src/scriptsExtracao/Sentinel_list_instacia.sql', 'r') as arquivo_sql:
+        o_query = arquivo_sql.read()
+        o_query = o_query.replace("'SxGxBxD'", "'MySql'")    
+
+        # Executa o script que retornará a lista de servidores para acesso remoto da extração.
+        o_result, success = i_query_executor.execute_query(o_query)
+        # Iniciar a leitura da consulta.
+
+        if success:
+            
+            for o_row in o_result: 
+                srv_remot  = str(o_row[4]) # IP
+                port_remot = int(o_row[6]) # Porta
+
+                try:
+                # Abrir conexão remota com o servidor de banco, de onde será extraido os METADADOS.
+                    origem = DatabaseConnection("MySQL", srv_remot, "mysql", "mddados", port_remot )
+                    
+                except Exception as e:
+                    print(f"Error: {e}")
+                    continue
+                
+                o_query_executor = QueryExecutor(origem.connection)
+                # Ler o script que será executado no servidor remoto
+                with open('i_database/src/scriptsExtracao/mysql_02_insert_tamanho_database.sql', 'r') as arquivo_sql:
+                    o_query = arquivo_sql.read()
+
+                try:
+                    # Executa o script de extração.
+                    resutRemoto, success = o_query_executor.execute_query(o_query)                
+                except Exception as e:
+                    print(f"Error: {e}")
+                    continue
+
+            # Iniciar a leitura da consulta.
+                if success:
+                    for row_r in resutRemoto:                     
+                        #row_r[0] -  name; row_r[1] -  setting; row_r[2] -  unit; row_r[3] -  category  
+                        #print(str(o_row[5]),str(row_r[0]),str(row_r[1]))          
+                        cont +=1 
+                        insert_v =  F"('{str(o_row[0])}','{str(row_r[0])}','{str(row_r[1])}')"
+                        gravar(insert_v)       
+                        #print(insert_v)   
+                        insert_v = ''
+
+            origem.close
+
+    i_destino.close
+    print(str(cont))
+
+if __name__ == "__main__":
+    extracao()
