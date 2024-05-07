@@ -17,7 +17,7 @@ Recupera:
 """
 # Processo para mapear os arquivos para conexão com o banco de dados.
 import sys
-sys.path.insert(1, './confg/data')
+sys.path.insert(1, '..app/confg/data')
 
 # 1 Importe a classe ConexaoConfigReader que retorna o ip do servidor
 import conexao_server #import ConexaoConfigReader

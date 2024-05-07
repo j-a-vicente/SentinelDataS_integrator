@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./confg/data"
+        "./confg/data",
+        "./app/confg/data"
     ]
 }
